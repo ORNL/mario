@@ -16,16 +16,16 @@ public:
   Repository(const char* path);
   ~Repository();
 
-  int SetPattern(const char* pattern, int nmatches, int* matches);
-  int Build();
-  int Print(int group, FILE* stream);
+  int Build(const char* pattern, int nmatches, int* matches);
+  int Print1D(int group, FILE* stream);
+  int Print2D(int group1, int group2, FILE* stream);
+  int Print3D(int group1, int group2, int group3, FILE* stream);
 
   char* path() { return path_; }
 
 private:
   int BuildDir(char* path);
   int AddFile(char* filename);
-  int Print1D(int group, FILE* stream);
 
 private:
   char path_[PATH_MAX];

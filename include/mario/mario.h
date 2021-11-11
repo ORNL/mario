@@ -18,9 +18,10 @@ extern "C" {
 typedef struct _mario_repository*   mario_repository;
 
 extern int mario_repository_create(const char* path, mario_repository* repo);
-extern int mario_repository_pattern(mario_repository repo, const char* pattern, int nmatches, int* matches);
-extern int mario_repository_build(mario_repository repo);
-extern int mario_repository_print(mario_repository repo, int group, FILE* stream);
+extern int mario_repository_build(mario_repository repo, const char* pattern, int nmatches, int* matches);
+extern int mario_repository_print1D(mario_repository repo, int group, FILE* stream);
+extern int mario_repository_print2D(mario_repository repo, int group1, int group2, FILE* stream);
+extern int mario_repository_print3D(mario_repository repo, int group1, int group2, int group3, FILE* stream);
 
 #ifdef __cplusplus
 } /* end of extern "C" */

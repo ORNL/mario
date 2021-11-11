@@ -14,18 +14,22 @@ int mario_repository_create(const char* path, mario_repository* srepo) {
   return MARIO_SUCCESS;
 }
 
-int mario_repository_pattern(mario_repository srepo, const char* pattern, int nmatches, int* matches) {
+int mario_repository_build(mario_repository srepo, const char* pattern, int nmatches, int* matches) {
   Repository* repo = srepo->class_obj;
-  return repo->SetPattern(pattern, nmatches, matches);
+  return repo->Build(pattern, nmatches, matches);
 }
 
-int mario_repository_build(mario_repository srepo) {
+int mario_repository_print1D(mario_repository srepo, int group, FILE* stream) {
   Repository* repo = srepo->class_obj;
-  return repo->Build();
+  return repo->Print1D(group, stream);
 }
 
-int mario_repository_print(mario_repository srepo, int group, FILE* stream) {
+int mario_repository_print2D(mario_repository srepo, int group1, int group2, FILE* stream) {
   Repository* repo = srepo->class_obj;
-  return repo->Print(group, stream);
+  return repo->Print2D(group1, group2, stream);
 }
 
+int mario_repository_print3D(mario_repository srepo, int group1, int group2, int group3, FILE* stream) {
+  Repository* repo = srepo->class_obj;
+  return repo->Print3D(group1, group2, group3, stream);
+}
