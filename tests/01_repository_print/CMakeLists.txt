@@ -1,0 +1,1 @@
+mario_test(test01_repository_print)

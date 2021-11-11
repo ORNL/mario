@@ -1,0 +1,41 @@
+#ifndef MARIO_SRC_REPOSITORY_H
+#define MARIO_SRC_REPOSITORY_H
+
+#include "Config.h"
+#include "Releasable.h"
+#include <limits.h>
+#include <regex.h>
+#include <vector>
+
+namespace mario {
+
+class File;
+
+class Repository : public Releasable<struct _mario_repository, Repository> {
+public:
+  Repository(const char* path);
+  ~Repository();
+
+  int SetPattern(const char* pattern, int nmatches, int* matches);
+  int Build();
+  int Print(int group, FILE* stream);
+
+  char* path() { return path_; }
+
+private:
+  int BuildDir(char* path);
+  int AddFile(char* filename);
+  int Print1D(int group, FILE* stream);
+
+private:
+  char path_[PATH_MAX];
+  char pattern_[1024];
+  int nmatches_;
+  int matches_[3];
+  regex_t regex_;
+  std::vector<File*> files_;
+};
+
+} /* namespace mario */
+
+#endif /* MARIO_SRC_REPOSITORY_H */

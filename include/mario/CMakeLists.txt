@@ -1,0 +1,4 @@
+install(FILES
+  mario.h
+  DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/mario)
+

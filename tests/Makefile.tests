@@ -1,0 +1,19 @@
+IRIS			:= $(HOME)/.local
+CC				:= gcc
+CXX				:= g++
+INCLUDE		+= -I$(IRIS)/include -I../00_common
+CFLAGS		+= ${INCLUDE} -g -std=gnu99
+CXXFLAGS	+= ${INCLUDE} -g -std=c++11
+LDFLAGS	  += -L${IRIS}/lib -L${IRIS}/lib64 -lmario -lpthread -ldl
+
+ifeq (1, ${CPP})
+$(TEST):$(TEST).cpp
+	$(CXX) $(CXXFLAGS) -o $@ $^ $(LDFLAGS)
+else
+$(TEST):$(TEST).c
+	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS)
+endif
+
+clean:
+	rm -f $(TEST)
+
