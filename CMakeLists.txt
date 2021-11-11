@@ -11,10 +11,10 @@ set(MARIO_SRC_DIR ${PROJECT_SOURCE_DIR}/src)
 set(MARIO_INC_DIR ${PROJECT_SOURCE_DIR}/include)
 set(MARIO_BIN_DIR ${PROJECT_BINARY_DIR}/src)
 
-#ENABLE_TESTING()
-#include(CTest)
+ENABLE_TESTING()
+include(CTest)
 
-set(CTEST_PROJECT_NAME "MARIO")
+set(CTEST_PROJECT_NAME "mario")
 set(CTEST_NIGHTLY_START_TIME "01:00:00 UTC")
 
 set(CTEST_DROP_METHOD "https")
@@ -24,5 +24,5 @@ set(CTEST_DROP_SITE_CDASH TRUE)
 
 add_subdirectory(include)
 add_subdirectory(src)
-#add_subdirectory(tests)
+add_subdirectory(tests)
 
