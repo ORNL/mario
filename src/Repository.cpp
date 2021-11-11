@@ -62,20 +62,20 @@ int Repository::AddFile(char* filename) {
 
 int Repository::Print1D(int group, FILE* stream) {
   fprintf(stream, "== %s ==\n", path_);
-  std::map<int, off_t> db;  
+  std::map<int, off_t> m1;  
   for (auto I = files_.begin(), E = files_.end(); I != E; ++I) {
     File* file = *I;
     int key = file->attribute(group);
     off_t size = file->size();
-    if (db.count(key) == 0) db.insert(std::pair<int, off_t>(key, size));
+    if (m1.count(key) == 0) m1.insert(std::pair<int, off_t>(key, size));
     else {
-      off_t s = db[key];
-      db[key] = s + size;
+      off_t s = m1[key];
+      m1[key] = s + size;
     }
   }
-  for (auto I = db.begin(), E = db.end(); I != E; ++I) {
+  for (auto I = m1.begin(), E = m1.end(); I != E; ++I) {
     fprintf(stream, "%s [%5d]: FileSize [%10lu]\n",
-        group == mario_step ? "Step" : group == mario_level ? "Level" : "Rank",
+        group == mario_step ? "Step" : group == mario_level ? "Levl" : "Rank",
         I->first, I->second);
   }
   return MARIO_SUCCESS;
@@ -84,31 +84,30 @@ int Repository::Print1D(int group, FILE* stream) {
 int Repository::Print2D(int group1, int group2, FILE* stream) {
   if (group2 < 0) return Print1D(group1, stream);
   fprintf(stream, "== %s ==\n", path_);
-  std::map<int, std::map<int, off_t>*> db;  
+  std::map<int, std::map<int, off_t>*> m1;  
+  std::map<int, off_t>* m2;
   for (auto I = files_.begin(), E = files_.end(); I != E; ++I) {
     File* file = *I;
     int key1 = file->attribute(group1);
     int key2 = file->attribute(group2);
     off_t size = file->size();
-    if (db.count(key1) == 0) {
-      std::map<int, off_t>* m = new std::map<int, off_t>;
-      m->insert(std::pair<int, off_t>(key2, size));
-      db[key1] = m;
-    } else {
-      std::map<int, off_t>* m = db[key1];
-      if (m->count(key2) == 0) (*m)[key2] = size;
-      else {
-        off_t s = (*m)[key2];
-        (*m)[key2] = s + size;
-      }
+    if (m1.count(key1) == 0) {
+      m2 = new std::map<int, off_t>;
+      m1[key1] = m2;
+    } else m2 = m1[key1];
+    if (m2->count(key2) == 0) m2->insert(std::pair<int, off_t>(key2, size));
+    else {
+      off_t s = (*m2)[key2];
+      (*m2)[key2] = s + size;
     }
   }
-  for (auto I = db.begin(), E = db.end(); I != E; ++I) {
+
+  for (auto I = m1.begin(), E = m1.end(); I != E; ++I) {
     int key1 = I->first;
-    std::map<int, off_t>* m = I->second;
-    fprintf(stream, "%s  [%5d]\n",
+    std::map<int, off_t>* m2 = I->second;
+    fprintf(stream, "%s  [%5d]\n" RESET,
         group1 == mario_step ? "Step" : group1 == mario_level ? "Levl" : "Rank", key1);
-    for (auto I2 = m->begin(), E2 = m->end(); I2 != E2; ++I2) {
+    for (auto I2 = m2->begin(), E2 = m2->end(); I2 != E2; ++I2) {
       fprintf(stream, " %s [%5d]: FileSize [%10lu]\n",
           group2 == mario_step ? "Step" : group2 == mario_level ? "Levl" : "Rank",
           I2->first, I2->second);

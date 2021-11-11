@@ -20,7 +20,7 @@ int main(int argc, char** argv) {
 
   mario_repository repo;
   mario_repository_create(path, &repo);
-  mario_repository_build(repo, "hdf5_([0-9]*)_([0-9]*).h5", 2, match);
+  mario_repository_build(repo, "_([0-9]*)_([0-9]*).json", 2, match);
   mario_repository_print2D(repo, group1, group2, stdout);
 #endif
 

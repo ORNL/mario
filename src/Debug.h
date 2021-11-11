@@ -21,6 +21,7 @@
 #define _COLOR_DEBUG
 
 #ifdef _COLOR_DEBUG
+#define BOLD    "\033[1m"
 #define RED     "\033[22;31m"
 #define GREEN   "\033[22;32m"
 #define YELLOW  "\033[22;33m"
@@ -44,6 +45,7 @@
 #define _GRAY   "\033[22;47m"
 #define RESET   "\x1b[m"
 #else
+#define BOLD
 #define RED
 #define GREEN
 #define YELLOW
