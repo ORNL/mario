@@ -24,5 +24,6 @@ set(CTEST_DROP_SITE_CDASH TRUE)
 
 add_subdirectory(include)
 add_subdirectory(src)
+add_subdirectory(tools)
 add_subdirectory(tests)
 
