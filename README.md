@@ -14,18 +14,16 @@ $ make install
 ## Tools
 ### Mario-Castro
 ```
-$ cd ~/work/Castro/Exec/hydro_tests/Sedov
-$ ls -l
-amr_diag.out                  inputs.2d.cyl_in_cartcoords.testsuite  problem_initialize_state_data.H
-amrvis.defaults.sample        inputs.2d.sph_in_cylcoords             _prob_params
-Castro2d.gnu.x86-rome.MPI.ex  inputs.2d.sph_in_cylcoords.testsuite   README
-GNUmakefile                   inputs.3d.mhd                          sedov_2d_cyl
-GNUmakefile.orig              inputs.3d.sph                          species_diag.out
-grid_diag.out                 inputs.3d.sph.testsuite                testsuite_analysis
-inputs                        inputs.mini-Castro                     tmp_build_dir
-inputs.1d.cyl                 inputs.mini-Castro.gpu_test            Verification
-inputs.1d.sph                 Make.package
-inputs.2d.cyl_in_cartcoords   problem_initialize.H
+$ cd ~/work/Castro/Exec/hydro_tests/Sedov/sedov_2d_cyl
+$ ls
+sedov_2d_cyl_in_cart_chk00000  sedov_2d_cyl_in_cart_chk00160  sedov_2d_cyl_in_cart_plt00100
+sedov_2d_cyl_in_cart_chk00020  sedov_2d_cyl_in_cart_chk00180  sedov_2d_cyl_in_cart_plt00120
+sedov_2d_cyl_in_cart_chk00040  sedov_2d_cyl_in_cart_chk00200  sedov_2d_cyl_in_cart_plt00140
+sedov_2d_cyl_in_cart_chk00060  sedov_2d_cyl_in_cart_plt00000  sedov_2d_cyl_in_cart_plt00160
+sedov_2d_cyl_in_cart_chk00080  sedov_2d_cyl_in_cart_plt00020  sedov_2d_cyl_in_cart_plt00180
+sedov_2d_cyl_in_cart_chk00100  sedov_2d_cyl_in_cart_plt00040  sedov_2d_cyl_in_cart_plt00200
+sedov_2d_cyl_in_cart_chk00120  sedov_2d_cyl_in_cart_plt00060
+sedov_2d_cyl_in_cart_chk00140  sedov_2d_cyl_in_cart_plt00080
 
 $ mario-castro <path> [categories (1: Step, 2: Level, 3: Rank)]
 $ mario-castro . 1
