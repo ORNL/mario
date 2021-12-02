@@ -25,7 +25,7 @@ sedov_2d_cyl_in_cart_chk00100  sedov_2d_cyl_in_cart_plt00040  sedov_2d_cyl_in_ca
 sedov_2d_cyl_in_cart_chk00120  sedov_2d_cyl_in_cart_plt00060
 sedov_2d_cyl_in_cart_chk00140  sedov_2d_cyl_in_cart_plt00080
 
-$ mario-castro <path> [categories (1: Step, 2: Level, 3: Rank)]
+$ mario-castro <path> [categories (1: Step, 2: Level, 4: Rank)]
 $ mario-castro . 1
 == . ==
 Step [    0]: FileSize [   1950295]
