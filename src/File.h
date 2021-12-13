@@ -33,7 +33,6 @@ private:
   int step_;
   int level_;
   int rank_;
-
 };
 
 } /* namespace mario */

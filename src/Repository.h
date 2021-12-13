@@ -4,6 +4,7 @@
 #include "Config.h"
 #include "Releasable.h"
 #include <limits.h>
+#include <map>
 #include <regex.h>
 #include <vector>
 
@@ -17,9 +18,11 @@ public:
   ~Repository();
 
   int Build(const char* pattern, int nmatches, int* matches);
+  int Analyze1D(int group, std::map<int, off_t>* m1);
   int Print1D(int group, FILE* stream);
   int Print2D(int group1, int group2, FILE* stream);
   int Print3D(int group1, int group2, int group3, FILE* stream);
+  int Formula(int group, int* formulas, int nformulas, FILE* stream);
 
   char* path() { return path_; }
 

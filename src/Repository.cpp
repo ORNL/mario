@@ -5,7 +5,7 @@
 #include <string.h>
 #include <sys/types.h>
 #include <dirent.h>
-#include <map>
+#include <math.h>
 
 namespace mario {
 
@@ -60,19 +60,24 @@ int Repository::AddFile(char* filename) {
   return MARIO_SUCCESS;
 }
 
-int Repository::Print1D(int group, FILE* stream) {
-  fprintf(stream, "== %s ==\n", path_);
-  std::map<int, off_t> m1;  
+int Repository::Analyze1D(int group, std::map<int, off_t>* m1) {
   for (auto I = files_.begin(), E = files_.end(); I != E; ++I) {
     File* file = *I;
     int key = file->attribute(group);
     off_t size = file->size();
-    if (m1.count(key) == 0) m1.insert(std::pair<int, off_t>(key, size));
+    if (m1->count(key) == 0) m1->insert(std::pair<int, off_t>(key, size));
     else {
-      off_t s = m1[key];
-      m1[key] = s + size;
+      off_t s = m1->at(key);
+      (*m1)[key] = s + size;
     }
   }
+  return MARIO_SUCCESS;
+}
+
+int Repository::Print1D(int group, FILE* stream) {
+  fprintf(stream, "== %s ==\n", path_);
+  std::map<int, off_t> m1;  
+  Analyze1D(group, &m1);
   for (auto I = m1.begin(), E = m1.end(); I != E; ++I) {
     fprintf(stream, "%s [%5d]: FileSize [%10lu]\n",
         group == mario_step ? "Step" : group == mario_level ? "Levl" : "Rank",
@@ -161,6 +166,37 @@ int Repository::Print3D(int group1, int group2, int group3, FILE* stream) {
       }
     }
   }
+  return MARIO_SUCCESS;
+}
+
+int Repository::Formula(int group, int* formulas, int nformulas, FILE* stream) {
+  std::map<int, off_t> m1;  
+  Analyze1D(group, &m1);
+  double val0 = 0;
+  double val1 = 0;
+  int nsteps = -1;
+  int step_diff = 0;
+  int step_last = 0;
+  for (auto I = m1.begin(), E = m1.end(); I != E; ++I) {
+    int step = I->first;
+    off_t filesize = I->second;
+    if (nsteps > 0 && (step - step_last) != step_diff) break;
+    if (step_diff == 0 && I != m1.begin()) step_diff = step;
+    if (I == m1.begin()) val0 = (double) filesize;
+    val1 = (double) filesize;
+    step_last = step;
+    nsteps++;
+  }
+  _debug("nsteps[%d] step_diff[%d] val0[%lu] val1[%lu]", nsteps, step_diff, val0, val1);
+
+  double linear = (val1 - val0) / nsteps;
+  double datagrowth = pow(val1 / val0, 1 / (double) nsteps);
+  double quadratic = (val1 - val0) / (step_diff * nsteps * step_diff * nsteps);
+  double cubic = (val1 - val0) / (step_diff * nsteps * step_diff * nsteps * step_diff * nsteps);
+  double loga = (val1 - val0) / log10(step_diff * nsteps);
+
+  _debug("linear[%lf] datagrowth[%lf] quadratic[%lf] cubic[%lf] log[%lf]", linear, datagrowth, quadratic, cubic, loga);
+
   return MARIO_SUCCESS;
 }
 

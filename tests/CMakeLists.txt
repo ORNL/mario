@@ -9,3 +9,4 @@ macro(mario_test arg)
 endmacro(mario_test)
 
 add_subdirectory(01_repository_print)
+add_subdirectory(02_repository_formula)
