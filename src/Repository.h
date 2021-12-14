@@ -22,13 +22,14 @@ public:
   int Print1D(int group, FILE* stream);
   int Print2D(int group1, int group2, FILE* stream);
   int Print3D(int group1, int group2, int group3, FILE* stream);
-  int Formula(int group, int* formulas, int nformulas, FILE* stream);
+  int Formula(int group, FILE* stream);
 
   char* path() { return path_; }
 
 private:
   int BuildDir(char* path);
   int AddFile(char* filename);
+  double GetDiff(off_t* src, off_t* d0, off_t* d1, off_t* d2, off_t* d3, off_t* d4, double* weights, int nsteps);
 
 private:
   char path_[PATH_MAX];

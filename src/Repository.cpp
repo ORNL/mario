@@ -5,6 +5,7 @@
 #include <string.h>
 #include <sys/types.h>
 #include <dirent.h>
+#include <float.h>
 #include <math.h>
 
 namespace mario {
@@ -169,7 +170,7 @@ int Repository::Print3D(int group1, int group2, int group3, FILE* stream) {
   return MARIO_SUCCESS;
 }
 
-int Repository::Formula(int group, int* formulas, int nformulas, FILE* stream) {
+int Repository::Formula(int group, FILE* stream) {
   std::map<int, off_t> m1;  
   Analyze1D(group, &m1);
   double val0 = 0;
@@ -187,7 +188,7 @@ int Repository::Formula(int group, int* formulas, int nformulas, FILE* stream) {
     step_last = step;
     nsteps++;
   }
-  _debug("nsteps[%d] step_diff[%d] val0[%lu] val1[%lu]", nsteps, step_diff, val0, val1);
+  _debug("nsteps[%d] step_diff[%d] val0[%.0lf] val1[%.0lf]", nsteps, step_diff, val0, val1);
 
   double linear = (val1 - val0) / nsteps;
   double datagrowth = pow(val1 / val0, 1 / (double) nsteps);
@@ -197,7 +198,86 @@ int Repository::Formula(int group, int* formulas, int nformulas, FILE* stream) {
 
   _debug("linear[%lf] datagrowth[%lf] quadratic[%lf] cubic[%lf] log[%lf]", linear, datagrowth, quadratic, cubic, loga);
 
+  off_t* size_amrex = new off_t[nsteps + 1];
+  off_t* size_linear = new off_t[nsteps + 1];
+  off_t* size_datagrowth = new off_t[nsteps + 1];
+  off_t* size_quadratic = new off_t[nsteps + 1];
+  off_t* size_cubic = new off_t[nsteps + 1];
+  off_t* size_log = new off_t[nsteps + 1];
+
+  size_amrex[0] = val0;
+  size_linear[0] = val0;
+  size_datagrowth[0] = val0;
+  size_quadratic[0] = val0;
+  size_cubic[0] = val0;
+  size_log[0] = val0;
+
+  for (int i = 1; i <= nsteps; i++) {
+    size_amrex[i] = m1[i * step_diff];
+    size_linear[i] = size_linear[i - 1] + linear;
+    size_datagrowth[i] = size_datagrowth[i - 1] * datagrowth;
+    size_quadratic[i] = quadratic * i * i * step_diff * step_diff + val0;
+    size_cubic[i] = cubic * i * i * i * step_diff * step_diff * step_diff + val0;
+    size_log[i] = loga * log10(i * step_diff) + val0;
+  }
+
+  fprintf(stream, "%4s %10s %10s %10s %10s %10s %10s\n",
+      "Step", "AMReX", "Linear", "DataGrowth", "Quadratic", "Cubic", "Log");
+  for (int i = 0; i <= nsteps; i++) {
+    fprintf(stream, "%4d %10lu %10lu %10lu %10lu %10lu %10lu\n",
+        i * step_diff,
+        size_amrex[i],
+        size_linear[i],
+        size_datagrowth[i],
+        size_quadratic[i],
+        size_cubic[i],
+        size_log[i]
+        );
+  }
+
+  int unit = 100;
+  double g = 1 / unit;
+  double weights[5] = { 0, 0, 0, 0, 0 };
+  double min_weights[5] = { 0, 0, 0, 0, 0 };
+  double min_diff = DBL_MAX;
+
+  for (int i = 0; i < unit * unit * unit * unit; i++) {
+    weights[0] = i % unit;
+    weights[1] = i % (unit * unit) / unit;
+    weights[2] = i % (unit * unit * unit) / unit / unit;
+    weights[3] = i % (unit * unit * unit * unit) / unit / unit / unit;
+    weights[4] = unit - weights[0] - weights[1] - weights[2] - weights[3];
+
+    weights[0] /= unit;
+    weights[1] /= unit;
+    weights[2] /= unit;
+    weights[3] /= unit;
+    weights[4] /= unit;
+
+    if (weights[4] < 0) continue;
+    double diff = GetDiff(size_amrex, size_linear, size_datagrowth, size_quadratic, size_cubic, size_log, weights, nsteps);
+//    fprintf(stream, "%lf %lf, %lf, %lf, %lf, %lf\n", diff, weights[0], weights[1], weights[2], weights[3], weights[4]);
+    if (diff < min_diff) {
+      min_diff = diff;
+      memcpy(min_weights, weights, sizeof(weights));
+    }
+  }
+  fprintf(stream, "Weights         %10.3lf %10.3lf %10.3lf %10.3lf %10.3lf\n", min_weights[0], min_weights[1], min_weights[2], min_weights[3], min_weights[4]);
+
   return MARIO_SUCCESS;
+}
+
+double Repository::GetDiff(off_t* src, off_t* d0, off_t* d1, off_t* d2, off_t* d3, off_t* d4, double* weights, int nsteps) {
+  double diff = 0;
+  for (int i = 0; i <= nsteps; i++) {
+    double dst = d0[i] * weights[0] +
+                 d1[i] * weights[1] + 
+                 d2[i] * weights[2] + 
+                 d3[i] * weights[3] + 
+                 d4[i] * weights[4];
+    diff += abs(src[i] - dst);
+  }
+  return diff;
 }
 
 } /* namespace mario */

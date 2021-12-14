@@ -34,8 +34,8 @@ int mario_repository_print3D(mario_repository srepo, int group1, int group2, int
   return repo->Print3D(group1, group2, group3, stream);
 }
 
-int mario_repository_formula(mario_repository srepo, int group, int* formulas, int nformulas, FILE* stream) {
+int mario_repository_formula(mario_repository srepo, int group, FILE* stream) {
   Repository* repo = srepo->class_obj;
-  return repo->Formula(group, formulas, nformulas, stream);
+  return repo->Formula(group, stream);
 }
 

@@ -28,7 +28,7 @@ extern int mario_repository_build(mario_repository repo, const char* pattern, in
 extern int mario_repository_print1D(mario_repository repo, int group, FILE* stream);
 extern int mario_repository_print2D(mario_repository repo, int group1, int group2, FILE* stream);
 extern int mario_repository_print3D(mario_repository repo, int group1, int group2, int group3, FILE* stream);
-extern int mario_repository_formula(mario_repository repo, int group, int* formulas, int nformulas, FILE* stream);
+extern int mario_repository_formula(mario_repository repo, int group, FILE* stream);
 
 #ifdef __cplusplus
 } /* end of extern "C" */

@@ -14,6 +14,7 @@ int main(int argc, char** argv) {
   mario_repository_create(path, &repo);
   mario_repository_build(repo, "plt([0-9]*)/Level_([0-9]*)/Cell_D_([0-9]*)", 3, match);
   mario_repository_print3D(repo, group1, group2, group3, stdout);
+  mario_repository_formula(repo, mario_step, stdout);
 
   return 0;
 }
