@@ -23,3 +23,4 @@ add_library(mario ${MARIO_RUNTIME_SOURCES})
 
 install(TARGETS mario DESTINATION ${CMAKE_INSTALL_LIBDIR})
 
+add_subdirectory(tools)
