@@ -188,7 +188,8 @@ int Repository::Formula(int group, FILE* stream) {
     step_last = step;
     nsteps++;
   }
-  _debug("nsteps[%d] step_diff[%d] val0[%.0lf] val1[%.0lf]", nsteps, step_diff, val0, val1);
+  fprintf(stream, "=================================================================================\n");
+  fprintf(stream, "Nsteps[%d] StepDiff[%d] Start[%.0lf] End[%.0lf]\n", nsteps, step_diff, val0, val1);
 
   double linear = (val1 - val0) / nsteps;
   double datagrowth = pow(val1 / val0, 1 / (double) nsteps);
@@ -196,7 +197,8 @@ int Repository::Formula(int group, FILE* stream) {
   double cubic = (val1 - val0) / (step_diff * nsteps * step_diff * nsteps * step_diff * nsteps);
   double loga = (val1 - val0) / log10(step_diff * nsteps);
 
-  _debug("linear[%lf] datagrowth[%lf] quadratic[%lf] cubic[%lf] log[%lf]", linear, datagrowth, quadratic, cubic, loga);
+  fprintf(stream, "Linear[%lf] DataGrowth[%lf] Quadratic[%lf] Cubic[%lf] Log[%lf]\n", linear, datagrowth, quadratic, cubic, loga);
+  fprintf(stream, "=================================================================================\n");
 
   off_t* size_amrex = new off_t[nsteps + 1];
   off_t* size_linear = new off_t[nsteps + 1];
@@ -221,20 +223,6 @@ int Repository::Formula(int group, FILE* stream) {
     size_log[i] = loga * log10(i * step_diff) + val0;
   }
 
-  fprintf(stream, "%4s %10s %10s %10s %10s %10s %10s\n",
-      "Step", "AMReX", "Linear", "DataGrowth", "Quadratic", "Cubic", "Log");
-  for (int i = 0; i <= nsteps; i++) {
-    fprintf(stream, "%4d %10lu %10lu %10lu %10lu %10lu %10lu\n",
-        i * step_diff,
-        size_amrex[i],
-        size_linear[i],
-        size_datagrowth[i],
-        size_quadratic[i],
-        size_cubic[i],
-        size_log[i]
-        );
-  }
-
   int unit = 100;
   double g = 1 / unit;
   double weights[5] = { 0, 0, 0, 0, 0 };
@@ -256,13 +244,31 @@ int Repository::Formula(int group, FILE* stream) {
 
     if (weights[4] < 0) continue;
     double diff = GetDiff(size_amrex, size_linear, size_datagrowth, size_quadratic, size_cubic, size_log, weights, nsteps);
-//    fprintf(stream, "%lf %lf, %lf, %lf, %lf, %lf\n", diff, weights[0], weights[1], weights[2], weights[3], weights[4]);
     if (diff < min_diff) {
       min_diff = diff;
       memcpy(min_weights, weights, sizeof(weights));
     }
   }
+
+  fprintf(stream, "%4s %10s %10s %10s %10s %10s %10s %10s\n",
+      "Step", "AMReX", "Linear", "DataGrowth", "Quadratic", "Cubic", "Log", "Hybrid");
+  for (int i = 0; i <= nsteps; i++) {
+    fprintf(stream, "%4d %10lu %10lu %10lu %10lu %10lu %10lu %10.0lf\n",
+        i * step_diff,
+        size_amrex[i],
+        size_linear[i],
+        size_datagrowth[i],
+        size_quadratic[i],
+        size_cubic[i],
+        size_log[i],
+        size_linear[i] * min_weights[0] + size_datagrowth[i] * min_weights[1] +
+        size_quadratic[i] * min_weights[2] + size_cubic[i] * min_weights[3] +
+        size_log[i] * min_weights[4]
+        );
+  }
+
   fprintf(stream, "Weights         %10.3lf %10.3lf %10.3lf %10.3lf %10.3lf\n", min_weights[0], min_weights[1], min_weights[2], min_weights[3], min_weights[4]);
+  fprintf(stream, "=================================================================================\n");
 
   return MARIO_SUCCESS;
 }
