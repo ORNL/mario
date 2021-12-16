@@ -382,8 +382,6 @@ sedov_2d_cyl_in_cart_chk00140  sedov_2d_cyl_in_cart_plt00080
 
 $ mario-castro-weights <path>
 $ mario-castro-weights .
-[D] MARIO [Repository.cpp:191:Formula] nsteps[25] step_diff[10] val0[1950295] val1[51842849]
-[D] MARIO [Repository.cpp:199:Formula] linear[1995702.160000] datagrowth[1.140207] quadratic[798.280864] cubic[3.193123] log[20806422.937841]
 Step      AMReX     Linear DataGrowth  Quadratic      Cubic        Log
    0    1950295    1950295    1950295    1950295    1950295    1950295
   10    1950295    3945997    2223739    2030123    1953488   22756717
